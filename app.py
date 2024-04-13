@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
 from config.environment import db_URI
 
 
@@ -13,12 +14,9 @@ db = SQLAlchemy(app)
 # instantiate marshmellow to tell it about flask
 marsh = Marshmallow(app)
 
+bcrypt = Bcrypt(app)
+from controllers import footballer_controller, user_controller
 
-# @app.route("/hello", methods={"GET"})
-# def hello_world():
-#     return "<p>Hello, World!</p>"
-
-
-from controllers import footballer_controller
 
 app.register_blueprint(footballer_controller.router, url_prefix="/api")
+app.register_blueprint(user_controller.router, url_prefix="/api")
