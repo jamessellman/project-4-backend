@@ -27,24 +27,57 @@ def get_players():
     return Football_Serializer.jsonify(players, many=True)
 
 
-# the function that geta single player
-@router.route("/players/<int:id>", methods=["GET"])
-def get_single_player_by_id(id):
-    player = FootballerModel.query.get(id)
-    print(player)
+# the function that gets a single player
+@router.route("/players/<int:player_id>", methods=["GET"])
+def get_single_player_by_id(player_id):
+    player = FootballerModel.query.get(player_id)
     return Football_Serializer.jsonify(player)
 
 
+# funtion that adds a player
 @router.route("/players", methods=["POST"])
 def add_a_player():
     player_dictionary = request.json
-    print("dictionary", player_dictionary)
     try:
-        player = Football_Serializer.load(player_dictionary)
-        print("player", player)
-        db.session.add(player)
+        player_to_add = Football_Serializer.load(player_dictionary)
+        db.session.add(player_to_add)
         db.session.commit()
     except ValidationError as e:
         return {"errors": e.messages, "message": "Something went wrong"}
 
-    return Football_Serializer.jsonify(player)
+    return Football_Serializer.jsonify(player_to_add)
+
+
+# function that deletes a player
+@router.route("/players/<int:player_id>", methods=["DELETE"])
+def delete_a_player(player_id):
+    # first we have to find the player to delete linking by id from request from client
+    player_to_delete = FootballerModel.query.get(player_id)
+
+    if not player_to_delete:
+        return {"message": "No player found"}, HTTPStatus.NOT_FOUND
+
+    player_to_delete.remove()
+
+    return "", HTTPStatus.NO_CONTENT
+
+
+# function that edits a player
+@router.route("/players/<int:player_id>", methods=["PUT"])
+def player_to_edit(player_id):
+    player_dictionary = request.json
+
+    existing_player = FootballerModel.query.get(player_id)
+    print(player_id)
+    if not existing_player:
+        return {"message": "No player found"}, HTTPStatus.NOT_FOUND
+
+    try:
+        player = Football_Serializer.load(
+            player_dictionary, instance=existing_player, partial=True
+        )
+
+        player.save()
+    except ValidationError as e:
+        return {"errors": e.messages, "message": "Something went wrong"}
+    return Football_Serializer.jsonify(player), HTTPStatus.OK
