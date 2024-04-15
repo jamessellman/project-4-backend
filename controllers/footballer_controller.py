@@ -1,7 +1,7 @@
 # blueprint It allows you to organize routes, templates,
 # and static files into modular components,
 # making your Flask application more maintainable and scalable.
-from flask import Blueprint, request, g
+from flask import Blueprint, request, g, jsonify
 from http import HTTPStatus
 from marshmallow.exceptions import ValidationError
 
@@ -136,3 +136,26 @@ def delete_a_comment(comment_id):
     comment.remove()
 
     return "", HTTPStatus.NO_CONTENT
+
+
+# get all comments
+@router.route("/comments", methods=["GET"])
+def get_all_comments():
+    comments = CommentModel.query.all()
+    return Comment_Serializer.jsonify(comments, many=True)
+
+
+# get all comments by footballerID
+@router.route("/comments/<int:footballer_id>", methods=["GET"])
+def get_comments_by_footballer_id(footballer_id):
+    comments = CommentModel.query.filter_by(footballer_id=footballer_id).all()
+    print(comments)
+    comment_serializer = CommentSerializer()
+    return jsonify(comment_serializer.dump(comments, many=True))
+
+
+# get all comments by user_id
+# @router.route("/comments/<int:>", methods=["GET"])
+# @secure_route
+# def get_comments_by_user_id(user_id):
+#     current_user = g.current_user.id
