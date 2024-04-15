@@ -12,7 +12,7 @@ with app.app_context():
 
         print("seeding")
         user = UserModel(
-            email="jamie@jamie.com", username="jamie", password_hash="Hello123!"
+            email="jamie@jamie.com", username="jamie", password="Hello123!"
         )
         user.save()
 
@@ -28,6 +28,7 @@ with app.app_context():
             foot="left",
             image="https://cdn.britannica.com/91/200591-050-95794068/Mohamed-Salah-Egyptian-skills-English-Premier-League-2018.jpg",
             bio="Mohamed Salah (born 15 June 1992), known as Mohamed Salah or Mo Salah, is an Egyptian professional footballer who plays as a right winger or forward for Premier League club Liverpool and captains the Egypt national team. Regarded as one of the best players of his generation and among the greatest African players of all time, he is known for his clinical finishing, dribbling and speed",
+            admin_id=1,
         )
         mo_salah.save()
 
