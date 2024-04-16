@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from datetime import datetime, timedelta, timezone
 import jwt
-from flask import Blueprint, request
+from flask import Blueprint, request, g, jsonify
 from marshmallow.exceptions import ValidationError
 
 
@@ -57,5 +57,18 @@ def login_a_user():
     # ! Return a token to the user, so that they can use that token when doing things like POST a tea.
 
     token = jwt.encode(payload, SECRET, algorithm="HS256")
-
+    print("login success")
     return {"message": "login success", "token": token}, HTTPStatus.ACCEPTED
+
+
+# @router.route("/signup", methods=["GET"])
+# def get_current_user():
+#     try:
+#         current_user = g.current_user
+#         if current_user:
+#             return jsonify(current_user), 200
+#         else:
+#             return jsonify(message="Current user not found"), 404
+#     except Exception as e:
+#         print(e)
+#         return jsonify(message="There was an error, please try again later."), 500
