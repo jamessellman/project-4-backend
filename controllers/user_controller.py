@@ -8,6 +8,7 @@ from marshmallow.exceptions import ValidationError
 from models.user_model import UserModel
 from serializers.user_serializer import UserSerializer
 from config.environment import SECRET
+from middleware.secure_route import secure_route
 
 user_serializer = UserSerializer()
 
@@ -19,6 +20,15 @@ router = Blueprint("users", __name__)
 def signup_a_user():
     print("in user controller 1")
     user_dictionary = request.json
+
+    # ! Check the passwords
+    if user_dictionary["password"] != user_dictionary["passwordConfirmation"]:
+        return {
+            "errors": "Passwords do not match",
+            "messsages": "Something went wrong",
+        }, HTTPStatus.UNPROCESSABLE_ENTITY
+    # ! Delete the password conf field that marshmallow doens't know about.
+    del user_dictionary["passwordConfirmation"]
 
     try:
         user = user_serializer.load(user_dictionary)
@@ -61,14 +71,15 @@ def login_a_user():
     return {"message": "login success", "token": token}, HTTPStatus.ACCEPTED
 
 
-# @router.route("/signup", methods=["GET"])
-# def get_current_user():
-#     try:
-#         current_user = g.current_user
-#         if current_user:
-#             return jsonify(current_user), 200
-#         else:
-#             return jsonify(message="Current user not found"), 404
-#     except Exception as e:
-#         print(e)
-#         return jsonify(message="There was an error, please try again later."), 500
+@router.route("/signup", methods=["GET"])
+@secure_route
+def get_current_user():
+    try:
+        current_user = g.current_user
+        if current_user:
+            return user_serializer.jsonify(current_user), 200
+        else:
+            return jsonify(message="Current user not found"), 404
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error, please try again later."), 500
