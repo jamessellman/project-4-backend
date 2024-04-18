@@ -4,6 +4,7 @@
 from flask import Blueprint, request, g, jsonify
 from http import HTTPStatus
 from marshmallow.exceptions import ValidationError
+import random
 
 from app import db
 
@@ -48,7 +49,6 @@ def get_single_player_by_id(player_id):
 def add_a_player():
     player_dictionary = request.json
     player_dictionary["user_id"] = g.current_user.id
-    player_dictionary["admin_id"] = 1
     try:
         player_to_add = Football_Serializer.load(player_dictionary)
         player_to_add.save()
@@ -102,6 +102,17 @@ def player_to_edit(player_id):
             }, HTTPStatus.UNAUTHORIZED
     except ValidationError as e:
         return {"errors": e.messages, "message": "Something went wrong"}
+
+
+# function to choose a random player
+@router.route("player/random", methods=["GET"])
+def select_random_profile():
+    get_all_profile_ids = db.session.query(
+        FootballerModel.id
+    ).all()  # Get all profile IDs
+    random_id = random.choice(get_all_profile_ids)[0]  # Select a random ID
+    profile = FootballerModel.query.get(random_id)  # Retrieve the corresponding profile
+    return Football_Serializer.jsonify(profile)
 
 
 # FUNCTIONS FOR COMMENTS

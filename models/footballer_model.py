@@ -10,8 +10,8 @@ class FootballerModel(db.Model, BaseModel):
     # defining comments in players table
     # ! This is going to be the unique ID for this model.
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    admin_id = db.Column(db.Integer, nullable=False)
 
+    team = db.Column(db.Text, nullable=False)
     name = db.Column(db.Text, nullable=False)
     position = db.Column(db.Text, nullable=False)
     shirt_number = db.Column(db.Integer, nullable=False)
