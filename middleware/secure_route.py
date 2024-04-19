@@ -27,18 +27,18 @@ def secure_route(route_func):
             payload = jwt.decode(clean_token, SECRET, "HS256")
             # GET THE USER FROM THE TOKEN
             user_id = payload["sub"]
-            # USER THE USER FROM DV WITH THIS ID
+            # USER THE USER FROM DB WITH THIS ID
             user = db.session.query(UserModel).get(user_id)
             # ATTACH THIS UDER TO THE REQUEST FOR COMPARISION LATER
             g.current_user = user
             print("USER", user)
+
+            return route_func(*args, **kwargs)
 
         except jwt.ExpiredSignatureError:
             return {"message": "Token has expired"}, HTTPStatus.UNAUTHORIZED
         except Exception as e:
             print(e)
             return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
-
-        return route_func(*args, **kwargs)
 
     return wrapper

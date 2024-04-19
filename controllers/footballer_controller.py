@@ -43,15 +43,16 @@ def get_single_player_by_id(player_id):
     return Football_Serializer.jsonify(player)
 
 
-# funtion that adds a player
 @router.route("/players", methods=["POST"])
 @secure_route
 def add_a_player():
+
     player_dictionary = request.json
     player_dictionary["user_id"] = g.current_user.id
     try:
         player_to_add = Football_Serializer.load(player_dictionary)
         player_to_add.save()
+
     except ValidationError as e:
         return {"errors": e.messages, "message": "Something went wrong"}
 
@@ -91,10 +92,13 @@ def player_to_edit(player_id):
 
     try:
         if g.current_user.id == 1 or existing_player.user_id == g.current_user.id:
+            print("1")
             player = Football_Serializer.load(
                 player_dictionary, instance=existing_player, partial=True
             )
+            print("2")
             player.save()
+            print("3")
             return Football_Serializer.jsonify(player), HTTPStatus.OK
         else:
             return {
