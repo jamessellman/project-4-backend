@@ -126,10 +126,12 @@ def select_random_profile():
 def create_comment(player_id):
     print("INSIDE COMMENTS")
     comment_dictionary = request.json
+    comment_dictionary["user_id"] = g.current_user.id
     existing_player = FootballerModel.query.get(player_id)
-    if not existing_player:
-        return {"message": "No player found"}, HTTPStatus.NOT_FOUND
 
+    if not existing_player:
+        print("3")
+        return {"message": "No player found"}, HTTPStatus.NOT_FOUND
     comment_to_add = Comment_Serializer.load(comment_dictionary)
     comment_to_add.footballer_id = player_id
     comment_to_add.user_id = g.current_user.id
