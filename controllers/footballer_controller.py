@@ -80,12 +80,13 @@ def delete_a_player(player_id):
 
 
 # function that edits a player
-@router.route("/players/<int:player_id>", methods=["PUT"])
+@router.route("/players/<int:player_id>", methods=["PUT", "PATCH"])
 @secure_route
 def player_to_edit(player_id):
     player_dictionary = request.json
 
     existing_player = FootballerModel.query.get(player_id)
+    print("EXISTING PLAYER:", existing_player)
     print(player_id)
     if not existing_player:
         return {"message": "No player found"}, HTTPStatus.NOT_FOUND

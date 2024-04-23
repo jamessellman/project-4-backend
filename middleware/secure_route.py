@@ -39,6 +39,6 @@ def secure_route(route_func):
             return {"message": "Token has expired"}, HTTPStatus.UNAUTHORIZED
         except Exception as e:
             print(e)
-            return {"message": "Unauthorized"}, HTTPStatus.UNAUTHORIZED
+            return {"message": "Unauthorized1"}, HTTPStatus.UNAUTHORIZED
 
     return wrapper
