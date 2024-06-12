@@ -1,7 +1,6 @@
 from sqlalchemy.ext.hybrid import hybrid_property
 from app import db, bcrypt
 from models.base_model import BaseModel
-from models.comment_model import CommentModel
 
 
 class UserModel(db.Model, BaseModel):

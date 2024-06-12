@@ -43,6 +43,7 @@ def get_single_player_by_id(player_id):
     return Football_Serializer.jsonify(player)
 
 
+# function that adds a player
 @router.route("/players", methods=["POST"])
 @secure_route
 def add_a_player():
@@ -63,7 +64,6 @@ def add_a_player():
 @router.route("/players/<int:player_id>", methods=["DELETE"])
 @secure_route
 def delete_a_player(player_id):
-    # first we have to find the player to delete linking by id from request from client
     player_to_delete = FootballerModel.query.get(player_id)
     if not player_to_delete:
         return {"message": "No player found"}, HTTPStatus.NOT_FOUND
@@ -86,20 +86,15 @@ def player_to_edit(player_id):
     player_dictionary = request.json
 
     existing_player = FootballerModel.query.get(player_id)
-    print("EXISTING PLAYER:", existing_player)
-    print(player_id)
     if not existing_player:
         return {"message": "No player found"}, HTTPStatus.NOT_FOUND
-
     try:
         if g.current_user.id == 1 or existing_player.user_id == g.current_user.id:
-            print("1")
+
             player = Football_Serializer.load(
                 player_dictionary, instance=existing_player, partial=True
             )
-            print("2")
             player.save()
-            print("3")
             return Football_Serializer.jsonify(player), HTTPStatus.OK
         else:
             return {
